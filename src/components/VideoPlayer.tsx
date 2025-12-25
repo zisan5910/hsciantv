@@ -107,6 +107,8 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
           origin: window.location.origin,
           enablejsapi: 1,
           start: 0,
+          vq: 'hd1080', // Force best quality
+          hd: 1,
         },
         events: {
           onReady: onPlayerReady,
@@ -133,6 +135,13 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
     const vol = event.target.getVolume();
     setVolume(vol || 100);
     setIsMuted(event.target.isMuted());
+    
+    // Force highest quality
+    try {
+      if (typeof event.target.setPlaybackQuality === 'function') {
+        event.target.setPlaybackQuality('hd1080');
+      }
+    } catch (e) {}
   };
 
   const onPlayerStateChange = (event: any) => {
@@ -270,14 +279,33 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
   const toggleFullscreen = useCallback(async () => {
     if (!containerRef.current) return;
 
+    const elem = containerRef.current as any;
+    const doc = document as any;
+
     try {
-      if (!document.fullscreenElement) {
-        if (containerRef.current.requestFullscreen) {
-          await containerRef.current.requestFullscreen();
-        } else if ((containerRef.current as any).webkitRequestFullscreen) {
-          await (containerRef.current as any).webkitRequestFullscreen();
+      const isCurrentlyFullscreen = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+      );
+
+      if (!isCurrentlyFullscreen) {
+        // Enter fullscreen with all vendor prefixes for mobile support
+        if (elem.requestFullscreen) {
+          await elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+          await elem.webkitRequestFullscreen();
+        } else if (elem.webkitEnterFullscreen) {
+          // iOS Safari video element specific
+          await elem.webkitEnterFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+          await elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+          await elem.msRequestFullscreen();
         }
         
+        // Lock orientation to landscape on mobile
         if (isMobile && screen.orientation && 'lock' in screen.orientation) {
           try {
             await (screen.orientation as any).lock('landscape');
@@ -285,12 +313,18 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
         }
         setIsFullscreen(true);
       } else {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) {
-          await (document as any).webkitExitFullscreen();
+        // Exit fullscreen with all vendor prefixes
+        if (doc.exitFullscreen) {
+          await doc.exitFullscreen();
+        } else if (doc.webkitExitFullscreen) {
+          await doc.webkitExitFullscreen();
+        } else if (doc.mozCancelFullScreen) {
+          await doc.mozCancelFullScreen();
+        } else if (doc.msExitFullscreen) {
+          await doc.msExitFullscreen();
         }
         
+        // Unlock orientation
         if (screen.orientation && 'unlock' in screen.orientation) {
           try {
             (screen.orientation as any).unlock();
@@ -306,7 +340,13 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
   // Handle fullscreen change
   useEffect(() => {
     const handleFullscreenChange = () => {
-      const isFs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      const doc = document as any;
+      const isFs = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+      );
       setIsFullscreen(isFs);
       
       if (!isFs && screen.orientation && 'unlock' in screen.orientation) {
@@ -318,9 +358,13 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, []);
 
