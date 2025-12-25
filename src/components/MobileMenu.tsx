@@ -45,94 +45,97 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-64 p-0">
-        <SheetHeader className="p-3 border-b border-border">
-          <SheetTitle className="text-left text-sm">মেনু</SheetTitle>
+      <SheetContent side="right" className="w-72 p-0 bg-background">
+        <SheetHeader className="px-4 py-3 border-b border-border/50">
+          <SheetTitle className="text-left text-base font-semibold">মেনু</SheetTitle>
         </SheetHeader>
 
-        <div className="p-3 space-y-3">
-          {/* Theme Toggle - Compact */}
-          <div className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/30">
-            <div className="flex items-center gap-2">
-              {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-              <span className="text-xs">{theme === 'dark' ? 'ডার্ক' : 'লাইট'}</span>
+        <div className="p-4 space-y-4">
+          {/* Theme Toggle */}
+          <div className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-muted/40 border border-border/30">
+            <div className="flex items-center gap-3">
+              {theme === 'dark' ? <Moon size={18} className="text-primary" /> : <Sun size={18} className="text-primary" />}
+              <span className="text-sm font-medium">{theme === 'dark' ? 'ডার্ক মোড' : 'লাইট মোড'}</span>
             </div>
             <Switch
               checked={theme === 'dark'}
               onCheckedChange={toggleTheme}
-              className="scale-75"
             />
           </div>
 
-          {/* Quick Actions - Compact Grid */}
+          {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-foreground bg-secondary/50 hover:bg-secondary rounded-lg transition-colors border border-border/30"
             >
-              <Share2 size={14} />
+              <Share2 size={16} />
               <span>শেয়ার</span>
             </button>
 
             <button
               onClick={handleInstall}
               disabled={isInstalled}
-              className={`flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors ${isInstalled ? 'opacity-50' : ''}`}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg transition-colors border border-border/30 ${
+                isInstalled 
+                  ? 'text-muted-foreground bg-muted/30 cursor-not-allowed' 
+                  : 'text-foreground bg-secondary/50 hover:bg-secondary'
+              }`}
             >
-              {isInstalled ? <Check size={14} /> : <Download size={14} />}
+              {isInstalled ? <Check size={16} /> : <Download size={16} />}
               <span>{isInstalled ? 'ইনস্টল✓' : 'ইনস্টল'}</span>
             </button>
           </div>
 
-          <div className="border-t border-border/50" />
+          <div className="border-t border-border/30" />
 
-          {/* Navigation - Compact */}
-          <div className="space-y-0.5">
+          {/* Navigation */}
+          <nav className="space-y-1">
             <Link
               to="/"
               onClick={onClose}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
             >
-              <BookOpen size={14} />
+              <BookOpen size={18} className="text-muted-foreground" />
               <span>কোর্সসমূহ</span>
             </Link>
 
             <a
               href="#"
-              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
               onClick={(e) => { e.preventDefault(); onClose(); }}
             >
-              <FileText size={14} />
+              <FileText size={18} className="text-muted-foreground" />
               <span>ম্যাটেরিয়াল</span>
             </a>
 
             <a
               href="#"
-              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
               onClick={(e) => { e.preventDefault(); onClose(); }}
             >
-              <LinkIcon size={14} />
+              <LinkIcon size={18} className="text-muted-foreground" />
               <span>PDF ডাউনলোড</span>
             </a>
-          </div>
+          </nav>
 
-          <div className="border-t border-border/50" />
+          <div className="border-t border-border/30" />
 
-          {/* Social - Compact Row */}
+          {/* Social Links */}
           <div>
-            <p className="text-[10px] text-muted-foreground px-3 mb-1.5">যোগাযোগ</p>
-            <div className="flex flex-wrap gap-1 px-2">
+            <p className="text-xs text-muted-foreground px-3 mb-2 font-medium">যোগাযোগ করুন</p>
+            <div className="flex items-center gap-1 px-2">
               {socialLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+                  className="p-2.5 text-muted-foreground hover:bg-secondary/50 rounded-lg transition-colors"
                   onClick={onClose}
                   title={link.label}
                 >
-                  <link.icon size={16} className={link.color} />
+                  <link.icon size={18} className={link.color} />
                 </a>
               ))}
             </div>
