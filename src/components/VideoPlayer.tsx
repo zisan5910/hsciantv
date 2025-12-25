@@ -291,46 +291,96 @@ const VideoPlayer = ({ embedUrl, title }: VideoPlayerProps) => {
       );
 
       if (!isCurrentlyFullscreen) {
-        // Enter fullscreen with all vendor prefixes for mobile support
+        // Enter fullscreen - try multiple methods for mobile compatibility
+        let fullscreenSuccess = false;
+        
+        // Method 1: Standard Fullscreen API
         if (elem.requestFullscreen) {
-          await elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-          await elem.webkitRequestFullscreen();
-        } else if (elem.webkitEnterFullscreen) {
-          // iOS Safari video element specific
-          await elem.webkitEnterFullscreen();
-        } else if (elem.mozRequestFullScreen) {
-          await elem.mozRequestFullScreen();
-        } else if (elem.msRequestFullscreen) {
-          await elem.msRequestFullscreen();
+          try {
+            await elem.requestFullscreen({ navigationUI: 'hide' });
+            fullscreenSuccess = true;
+          } catch (e) {}
         }
         
-        // Lock orientation to landscape on mobile
-        if (isMobile && screen.orientation && 'lock' in screen.orientation) {
+        // Method 2: Webkit (Safari/Chrome mobile)
+        if (!fullscreenSuccess && elem.webkitRequestFullscreen) {
           try {
-            await (screen.orientation as any).lock('landscape');
-          } catch (err) {}
+            elem.webkitRequestFullscreen();
+            fullscreenSuccess = true;
+          } catch (e) {}
         }
-        setIsFullscreen(true);
+        
+        // Method 3: Webkit Enter Fullscreen (iOS specific)
+        if (!fullscreenSuccess && elem.webkitEnterFullScreen) {
+          try {
+            elem.webkitEnterFullScreen();
+            fullscreenSuccess = true;
+          } catch (e) {}
+        }
+        
+        // Method 4: Mozilla
+        if (!fullscreenSuccess && elem.mozRequestFullScreen) {
+          try {
+            elem.mozRequestFullScreen();
+            fullscreenSuccess = true;
+          } catch (e) {}
+        }
+        
+        // Method 5: MS
+        if (!fullscreenSuccess && elem.msRequestFullscreen) {
+          try {
+            elem.msRequestFullscreen();
+            fullscreenSuccess = true;
+          } catch (e) {}
+        }
+        
+        if (fullscreenSuccess) {
+          setIsFullscreen(true);
+          // Lock orientation to landscape on mobile (non-blocking)
+          if (isMobile && screen.orientation && 'lock' in screen.orientation) {
+            (screen.orientation as any).lock('landscape').catch(() => {});
+          }
+        }
       } else {
         // Exit fullscreen with all vendor prefixes
+        let exitSuccess = false;
+        
         if (doc.exitFullscreen) {
-          await doc.exitFullscreen();
-        } else if (doc.webkitExitFullscreen) {
-          await doc.webkitExitFullscreen();
-        } else if (doc.mozCancelFullScreen) {
-          await doc.mozCancelFullScreen();
-        } else if (doc.msExitFullscreen) {
-          await doc.msExitFullscreen();
+          try {
+            await doc.exitFullscreen();
+            exitSuccess = true;
+          } catch (e) {}
+        }
+        if (!exitSuccess && doc.webkitExitFullscreen) {
+          try {
+            doc.webkitExitFullscreen();
+            exitSuccess = true;
+          } catch (e) {}
+        }
+        if (!exitSuccess && doc.webkitCancelFullScreen) {
+          try {
+            doc.webkitCancelFullScreen();
+            exitSuccess = true;
+          } catch (e) {}
+        }
+        if (!exitSuccess && doc.mozCancelFullScreen) {
+          try {
+            doc.mozCancelFullScreen();
+            exitSuccess = true;
+          } catch (e) {}
+        }
+        if (!exitSuccess && doc.msExitFullscreen) {
+          try {
+            doc.msExitFullscreen();
+            exitSuccess = true;
+          } catch (e) {}
         }
         
+        setIsFullscreen(false);
         // Unlock orientation
         if (screen.orientation && 'unlock' in screen.orientation) {
-          try {
-            (screen.orientation as any).unlock();
-          } catch (err) {}
+          (screen.orientation as any).unlock?.();
         }
-        setIsFullscreen(false);
       }
     } catch (err) {
       console.error('Fullscreen error:', err);
