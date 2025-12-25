@@ -45,102 +45,97 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-72 p-0">
-        <SheetHeader className="p-4 border-b border-border">
-          <SheetTitle className="text-left">Menu</SheetTitle>
+      <SheetContent side="right" className="w-64 p-0">
+        <SheetHeader className="p-3 border-b border-border">
+          <SheetTitle className="text-left text-sm">মেনু</SheetTitle>
         </SheetHeader>
 
-        <div className="p-4 space-y-4">
-          {/* Theme Toggle */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-            <div className="flex items-center gap-3">
-              {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
-              <span className="text-sm font-medium">
-                {theme === 'dark' ? 'ডার্ক মোড' : 'লাইট মোড'}
-              </span>
+        <div className="p-3 space-y-3">
+          {/* Theme Toggle - Compact */}
+          <div className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/30">
+            <div className="flex items-center gap-2">
+              {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+              <span className="text-xs">{theme === 'dark' ? 'ডার্ক' : 'লাইট'}</span>
             </div>
             <Switch
               checked={theme === 'dark'}
               onCheckedChange={toggleTheme}
+              className="scale-75"
             />
           </div>
 
-          {/* App Actions */}
-          <div className="space-y-1">
+          {/* Quick Actions - Compact Grid */}
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleShare}
-              className="sidebar-link w-full"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
             >
-              <Share2 size={20} />
-              <span>অ্যাপ শেয়ার করুন</span>
+              <Share2 size={14} />
+              <span>শেয়ার</span>
             </button>
 
             <button
               onClick={handleInstall}
               disabled={isInstalled}
-              className={`sidebar-link w-full ${isInstalled ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors ${isInstalled ? 'opacity-50' : ''}`}
             >
-              {isInstalled ? <Check size={20} /> : <Download size={20} />}
-              <span>{isInstalled ? 'ইনস্টল করা হয়েছে' : 'অ্যাপ ইনস্টল করুন'}</span>
+              {isInstalled ? <Check size={14} /> : <Download size={14} />}
+              <span>{isInstalled ? 'ইনস্টল✓' : 'ইনস্টল'}</span>
             </button>
           </div>
 
-          <div className="border-t border-border" />
+          <div className="border-t border-border/50" />
 
-          {/* Navigation Links */}
-          <div className="space-y-1">
+          {/* Navigation - Compact */}
+          <div className="space-y-0.5">
             <Link
               to="/"
               onClick={onClose}
-              className="sidebar-link"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
             >
-              <BookOpen size={20} />
-              <span>All Courses</span>
+              <BookOpen size={14} />
+              <span>কোর্সসমূহ</span>
             </Link>
 
             <a
               href="#"
-              className="sidebar-link"
-              onClick={(e) => {
-                e.preventDefault();
-                onClose();
-              }}
+              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              onClick={(e) => { e.preventDefault(); onClose(); }}
             >
-              <FileText size={20} />
-              <span>Study Materials</span>
+              <FileText size={14} />
+              <span>ম্যাটেরিয়াল</span>
             </a>
 
             <a
               href="#"
-              className="sidebar-link"
-              onClick={(e) => {
-                e.preventDefault();
-                onClose();
-              }}
+              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+              onClick={(e) => { e.preventDefault(); onClose(); }}
             >
-              <LinkIcon size={20} />
-              <span>PDF Downloads</span>
+              <LinkIcon size={14} />
+              <span>PDF ডাউনলোড</span>
             </a>
           </div>
 
-          <div className="border-t border-border" />
+          <div className="border-t border-border/50" />
 
-          {/* Social Links */}
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground px-4 mb-2 font-medium">যোগাযোগ</p>
-            {socialLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-link"
-                onClick={onClose}
-              >
-                <link.icon size={20} className={link.color} />
-                <span>{link.label}</span>
-              </a>
-            ))}
+          {/* Social - Compact Row */}
+          <div>
+            <p className="text-[10px] text-muted-foreground px-3 mb-1.5">যোগাযোগ</p>
+            <div className="flex flex-wrap gap-1 px-2">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+                  onClick={onClose}
+                  title={link.label}
+                >
+                  <link.icon size={16} className={link.color} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </SheetContent>

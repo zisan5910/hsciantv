@@ -131,7 +131,7 @@ const Watch = () => {
 
                 <button
                   onClick={handlePdfOpen}
-                  className="flex items-center gap-0.5 px-1.5 py-1 text-muted-foreground hover:text-foreground transition-colors text-xs font-medium"
+                  className="flex items-center gap-1 px-2 py-1 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium rounded-md"
                   aria-label="PDF"
                 >
                   <FileText size={14} />
@@ -202,7 +202,7 @@ const Watch = () => {
                     <span>Share</span>
                   </button>
 
-                  <button onClick={handlePdfOpen} className="control-button">
+                  <button onClick={handlePdfOpen} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200 flex items-center gap-2 font-medium">
                     <FileText size={18} />
                     <span>PDF</span>
                   </button>
