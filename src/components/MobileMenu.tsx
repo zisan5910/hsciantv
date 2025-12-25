@@ -45,17 +45,19 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-72 p-0 bg-background">
-        <SheetHeader className="px-4 py-3 border-b border-border/50">
-          <SheetTitle className="text-left text-base font-semibold">মেনু</SheetTitle>
+      <SheetContent side="right" className="w-72 p-0">
+        <SheetHeader className="p-4 border-b border-border">
+          <SheetTitle className="text-left">Menu</SheetTitle>
         </SheetHeader>
 
         <div className="p-4 space-y-4">
           {/* Theme Toggle */}
-          <div className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-muted/40 border border-border/30">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
             <div className="flex items-center gap-3">
-              {theme === 'dark' ? <Moon size={18} className="text-primary" /> : <Sun size={18} className="text-primary" />}
-              <span className="text-sm font-medium">{theme === 'dark' ? 'ডার্ক মোড' : 'লাইট মোড'}</span>
+              {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+              <span className="text-sm font-medium">
+                {theme === 'dark' ? 'ডার্ক মোড' : 'লাইট মোড'}
+              </span>
             </div>
             <Switch
               checked={theme === 'dark'}
@@ -63,82 +65,82 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
             />
           </div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* App Actions */}
+          <div className="space-y-1">
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-foreground bg-secondary/50 hover:bg-secondary rounded-lg transition-colors border border-border/30"
+              className="sidebar-link w-full"
             >
-              <Share2 size={16} />
-              <span>শেয়ার</span>
+              <Share2 size={20} />
+              <span>অ্যাপ শেয়ার করুন</span>
             </button>
 
             <button
               onClick={handleInstall}
               disabled={isInstalled}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg transition-colors border border-border/30 ${
-                isInstalled 
-                  ? 'text-muted-foreground bg-muted/30 cursor-not-allowed' 
-                  : 'text-foreground bg-secondary/50 hover:bg-secondary'
-              }`}
+              className={`sidebar-link w-full ${isInstalled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {isInstalled ? <Check size={16} /> : <Download size={16} />}
-              <span>{isInstalled ? 'ইনস্টল✓' : 'ইনস্টল'}</span>
+              {isInstalled ? <Check size={20} /> : <Download size={20} />}
+              <span>{isInstalled ? 'ইনস্টল করা হয়েছে' : 'অ্যাপ ইনস্টল করুন'}</span>
             </button>
           </div>
 
-          <div className="border-t border-border/30" />
+          <div className="border-t border-border" />
 
-          {/* Navigation */}
-          <nav className="space-y-1">
+          {/* Navigation Links */}
+          <div className="space-y-1">
             <Link
               to="/"
               onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
+              className="sidebar-link"
             >
-              <BookOpen size={18} className="text-muted-foreground" />
-              <span>কোর্সসমূহ</span>
+              <BookOpen size={20} />
+              <span>All Courses</span>
             </Link>
 
             <a
               href="#"
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
-              onClick={(e) => { e.preventDefault(); onClose(); }}
+              className="sidebar-link"
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+              }}
             >
-              <FileText size={18} className="text-muted-foreground" />
-              <span>ম্যাটেরিয়াল</span>
+              <FileText size={20} />
+              <span>Study Materials</span>
             </a>
 
             <a
               href="#"
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-secondary/50 rounded-lg transition-colors"
-              onClick={(e) => { e.preventDefault(); onClose(); }}
+              className="sidebar-link"
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+              }}
             >
-              <LinkIcon size={18} className="text-muted-foreground" />
-              <span>PDF ডাউনলোড</span>
+              <LinkIcon size={20} />
+              <span>PDF Downloads</span>
             </a>
-          </nav>
+          </div>
 
-          <div className="border-t border-border/30" />
+          <div className="border-t border-border" />
 
           {/* Social Links */}
-          <div>
-            <p className="text-xs text-muted-foreground px-3 mb-2 font-medium">যোগাযোগ করুন</p>
-            <div className="flex items-center gap-1 px-2">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 text-muted-foreground hover:bg-secondary/50 rounded-lg transition-colors"
-                  onClick={onClose}
-                  title={link.label}
-                >
-                  <link.icon size={18} className={link.color} />
-                </a>
-              ))}
-            </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground px-4 mb-2 font-medium">যোগাযোগ</p>
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sidebar-link"
+                onClick={onClose}
+              >
+                <link.icon size={20} className={link.color} />
+                <span>{link.label}</span>
+              </a>
+            ))}
           </div>
         </div>
       </SheetContent>
